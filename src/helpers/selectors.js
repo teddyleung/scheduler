@@ -17,3 +17,13 @@ export const getInterviewersForDay = (state, day) => {
     }
   }
 };
+
+export const getDayForAppointment = (state, appointmentId) => {
+  if (appointmentId === null) return null;
+  
+  const appointmentDay = state.days.find(day => {
+    return day.appointments.includes(appointmentId);
+  });
+
+  return appointmentDay ? appointmentDay.id : null;
+};

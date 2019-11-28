@@ -1,9 +1,12 @@
 import { useReducer, useEffect } from "react";
 import axios from 'axios';
+import { getDayForAppointment } from '../helpers/selectors';
 
 const SET_DAY = "SET_DAY";
 const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
 const SET_INTERVIEW = "SET_INTERVIEW";
+const DECREMENT_SPOTS = "DECREMENT_SPOTS";
+const INCREMENT_SPOTS = "INCREMENT_SPOTS";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -33,6 +36,36 @@ const reducer = (state, action) => {
         }
       }
     }
+    case DECREMENT_SPOTS: {
+      const appointmentDay = getDayForAppointment(state, action.id);
+      return {...state,
+        days: state.days.map(day => {
+          if (day.id === appointmentDay) {
+            return {
+              ...day,
+              spots: day.spots - 1
+            };
+          } else {
+            return { ...day };
+          }
+        })
+      }
+    }
+    case INCREMENT_SPOTS: {
+      const appointmentDay = getDayForAppointment(state, action.id);
+      return {...state,
+        days: state.days.map(day => {
+          if (day.id === appointmentDay) {
+            return {
+              ...day,
+              spots: day.spots + 1
+            };
+          } else {
+            return { ...day };
+          }
+        })
+      }
+    }    
     default: {
       return state;
     }
@@ -68,6 +101,9 @@ export default function useApplicationData() {
     
     return axios.put(`/api/appointments/${id}`, appointment)
       .then(() => {
+        if (state.appointments[id].interview === null) {
+          dispatch({ type: DECREMENT_SPOTS, id });
+        }
         dispatch({ type: SET_INTERVIEW, id, interview });
       });
   };
@@ -76,6 +112,7 @@ export default function useApplicationData() {
     return axios.delete(`/api/appointments/${id}`)
       .then(() => {    
         dispatch({ type: SET_INTERVIEW, id, interview: null });
+        dispatch({ type: INCREMENT_SPOTS, id });
       });
   };
 
