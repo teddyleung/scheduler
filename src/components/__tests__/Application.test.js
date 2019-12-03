@@ -149,5 +149,27 @@ describe("Application", () => {
 
   it("shows the delete error when failing to delete an existing appointment", async () => {
     axios.delete.mockRejectedValueOnce();
+
+    const { container } = render(<Application />);
+    
+    await waitForElement(() => getByText(container, "Archie Cohen"));
+    
+    const appointment = getAllByTestId(container, "appointment").find(
+      appointment => queryByText(appointment, "Archie Cohen")
+    );
+
+    fireEvent.click(getByAltText(appointment, "Delete"));
+
+    expect(getByText(appointment, "Are you sure you would like to delete?")).toBeInTheDocument();
+    
+    fireEvent.click(getByText(appointment, "Confirm"));
+    
+    expect(getByText(appointment, "Deleting")).toBeInTheDocument();
+
+    await waitForElement(() => getByText(appointment, "Could not cancel appointment"));
+
+    fireEvent.click(getByAltText(appointment, "Close"));
+
+    expect(getByText(appointment, "Archie Cohen")).toBeInTheDocument();
   });
 });
