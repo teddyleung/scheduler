@@ -1,5 +1,20 @@
 # Interview Scheduler
 
+Interview Scheduler is a single page application built with React which allows students to book interviews with mentors.
+
+## Final Product
+
+!["Interview Scheduler Demo"](https://github.com/teddyleung/scheduler/blob/master/doc/interview_scheduler_demo.gif)
+
+## Dependencies
+
+- React
+- Axios
+- Storybook
+- Jest
+- Cypress
+- Node 5.10.x or above
+
 ## Setup
 
 Install dependencies with `npm install`.
